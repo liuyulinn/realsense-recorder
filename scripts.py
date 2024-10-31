@@ -5,7 +5,7 @@ import termios
 import time
 import tty
 
-import cv2
+# import cv2
 # from loguru import logger
 
 # from offline_tele.utils.path import PACKAGE_ASSET_DIR
