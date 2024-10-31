@@ -4,6 +4,7 @@ Simple scripts to collect realsense trajectories
 ```bash
 conda create -n realsense python=3.10
 python3 -m pip install -U real-robot
+pip install termcolor
 ```
 
 ## Usage
