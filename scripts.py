@@ -6,7 +6,7 @@ import time
 import tty
 
 import cv2
-from loguru import logger
+# from loguru import logger
 
 # from offline_tele.utils.path import PACKAGE_ASSET_DIR
 from real_robot.sensors.camera import Camera, CameraConfig
