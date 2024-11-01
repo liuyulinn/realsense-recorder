@@ -8,8 +8,8 @@ import numpy as np
 # from offline_tele.modules.nuwa_utils.mask_extractor import extract_mask_from_image
 # from offline_tele.utils.path import PACKAGE_ASSET_DIR
 # from offline_tele.utils.video_image import save_mp4
-from PIL import Image
-from real_robot.sensors.camera import Camera, CameraConfig
+# from PIL import Image
+# from real_robot.sensors.camera import Camera, CameraConfig
 from termcolor import cprint
 
 
@@ -37,22 +37,22 @@ def save_mp4(save_path: str, frames: list[np.ndarray], fps: int = 60):
 class Recorder:
     def __init__(
         self,
-        camera: Camera,
+        # camera: Camera,
         save_dir: str = "video",
         # extract_mask: bool = True,
         # record_hand: bool = False,
     ) -> None:
-        self.fps = camera.config["Color"][-1]  # type: ignore
-        self.camera_intrinsics = camera.intrinsic_matrix
+        # self.fps = camera.config["Color"][-1]  # type: ignore
+        # self.camera_intrinsics = camera.intrinsic_matrix
 
-        # self.extract_mask = extract_mask
+        # # self.extract_mask = extract_mask
 
-        assert (
-            self.fps is not None and self.camera_intrinsics is not None
-        ), "Camera is not initialized properly."
-        print(f"Recording at {self.fps} fps")
+        # assert (
+        #     self.fps is not None and self.camera_intrinsics is not None
+        # ), "Camera is not initialized properly."
+        # print(f"Recording at {self.fps} fps")
 
-        self.cam_id = camera.camera_cfg.uid
+        # self.cam_id = camera.camera_cfg.uid
 
         self.sensor_rgb = []
         self.sensor_depth = []
@@ -67,6 +67,11 @@ class Recorder:
 
         os.makedirs(save_dir, exist_ok=True)
         self.save_dir = save_dir
+    
+    def regist_camera_info(self, camera_intrinsic, fps):
+
+        self.camera_intrinsics = camera_intrinsic
+        self.fps = fps
 
     def change_status(self):
         if self.recording:
@@ -78,7 +83,7 @@ class Recorder:
         cprint("Recording started.", "cyan")
         self.recording = True
         path = time.strftime("%Y%m%d-%H%M%S")
-        self.save_path = f"{self.save_dir}/{path}_{self.cam_id}"
+        self.save_path = f"{self.save_dir}/{path}"
         os.makedirs(self.save_path, exist_ok=True)
         print(f"Recording states in {self.save_path}")
 

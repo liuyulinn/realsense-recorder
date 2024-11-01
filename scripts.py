@@ -17,7 +17,7 @@ from termcolor import cprint
 from recorder import Recorder
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--record", "-r", type=int, default=1, help="Record the data")
+# parser.add_argument("--record", "-r", type=int, default=1, help="Record the data")
 args = parser.parse_args()
 
 try:
@@ -53,11 +53,12 @@ def keypoint_detection():
         run_as_process=True, stream_camera=True, stream_robot=False
     )
 
-    if args.record:
-        recorder = Recorder(camera=camera)
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        tty.setraw(fd)
+    recorder = Recorder()
+    camera_id = camera.camera_cfg.uid 
+    camera_intrinsic = camera.intrinsic_matrix
+    fps = camera.config["color"][-1]
+
+    recorder.regist_camera_info(camera_id=camera_id, camera_intrinsic=camera_intrinsic, fps=fps)
 
     idx = 0
     try:
@@ -68,31 +69,27 @@ def keypoint_detection():
             rgb = image["rgb"]
             depth = image["depth"]
 
-            if args.record:
-                if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
-                    key = sys.stdin.read(1)
-                    if key == " ":
-                        recorder.change_status()
-                    elif key == "q":
-                        cprint("Q key pressed, exiting...", "yellow")
-                        break
-                    else:
-                        cprint(f"Detected key: {key}", "cyan")
+            if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+                key = sys.stdin.read(1)
+                if key == " ":
+                    recorder.change_status()
+                elif key == "q":
+                    cprint("Q key pressed, exiting...", "yellow")
+                    break
+                else:
+                    cprint(f"Detected key: {key}", "cyan")
 
-                idx += 1
-                recorder.realsense_step(rgb, depth)
+            idx += 1
+            recorder.realsense_step(rgb, depth)
 
             time.sleep(
-                max(1 / camera.config["Color"][-1] - (time.time() - cur_time), 0)
+                max(1 / fps - (time.time() - cur_time), 0)
             )
 
     except Exception as e:
         cprint(f"Exception occurred: {e}", "red")
 
     finally:
-        # Ensure the terminal settings are restored even if an error occurs
-        if args.record:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         cprint("Restored terminal settings.", "green")
 
 
