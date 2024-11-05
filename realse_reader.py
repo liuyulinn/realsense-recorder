@@ -17,21 +17,25 @@ class Observer:
         if align_to == "depth":
             self.align = rs.align(depth.stream_type())
             intrinsics = depth.as_video_stream_profile().get_intrinsics()
-            K = np.array([
-                [intrinsics.fx, 0, intrinsics.ppx],
-                [0, intrinsics.fy, intrinsics.ppy],
-                [0, 0, 1],
-            ])
+            K = np.array(
+                [
+                    [intrinsics.fx, 0, intrinsics.ppx],
+                    [0, intrinsics.fy, intrinsics.ppy],
+                    [0, 0, 1],
+                ]
+            )
             self.Kinv = np.linalg.inv(K)
             self.K = K
         elif align_to == "color":
             self.align = rs.align(color.stream_type())
             intrinsics = color.as_video_stream_profile().get_intrinsics()
-            K = np.array([
-                [intrinsics.fx, 0, intrinsics.ppx],
-                [0, intrinsics.fy, intrinsics.ppy],
-                [0, 0, 1],
-            ])
+            K = np.array(
+                [
+                    [intrinsics.fx, 0, intrinsics.ppx],
+                    [0, intrinsics.fy, intrinsics.ppy],
+                    [0, 0, 1],
+                ]
+            )
             self.Kinv = np.linalg.inv(K)
             self.K = K
 
@@ -59,7 +63,7 @@ class Observer:
         #     [[x for x in v] for v in np.asanyarray(points.get_vertices())]
         # )
 
-        depth = np.array(depth.data) / 4000
+        depth = np.array(depth.data) / 1000
 
         return depth, np.array(color.data)
 
@@ -78,7 +82,7 @@ class Observer:
         #     [[x for x in v] for v in np.asanyarray(points.get_vertices())]
         # )
 
-        depth = np.array(depth.data) / 4000
+        depth = np.array(depth.data) / 1000
 
         xy = np.stack(np.meshgrid(np.arange(W), np.arange(H)), axis=-1)
         xyz = np.concatenate((xy * depth[..., None], depth[..., None]), axis=-1)
