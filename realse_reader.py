@@ -113,7 +113,7 @@ class Observer:
 
             return {
                 "rgb": np.array(color.data),
-                "depth": np.array(depth.data) / 4000,
+                "depth": np.array(depth.data) / 1000,
             }
 
         else:
